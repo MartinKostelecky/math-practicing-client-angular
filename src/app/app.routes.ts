@@ -1,14 +1,34 @@
 import { Routes } from '@angular/router';
-import {HomeComponent} from './components/home/home.component';
-import {AdditionComponent} from './components/addition/addition.component';
-import {SubtractionComponent} from './components/subtraction/subtraction.component';
-import {LogicComponent} from './components/logic/logic.component';
-import {AboutComponent} from './components/about/about.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'addition', component: AdditionComponent },
-  { path: 'subtraction', component: SubtractionComponent },
-  { path: 'logic', component: LogicComponent },
-  { path: 'about', component: AboutComponent }
+  {
+    path: '',
+    loadComponent: () =>
+      import('./components/home/home.component')
+        .then(m => m.HomeComponent)
+  },
+  {
+    path: 'addition',
+    loadComponent: () =>
+      import('./components/addition/addition.component')
+        .then(m => m.AdditionComponent)
+  },
+  {
+    path: 'subtraction',
+    loadComponent: () =>
+      import('./components/subtraction/subtraction.component')
+        .then(m => m.SubtractionComponent)
+  },
+  {
+    path: 'logic',
+    loadComponent: () =>
+      import('./components/logic/logic.component')
+        .then(m => m.LogicComponent)
+  },
+  {
+    path: 'about',
+    loadComponent: () =>
+      import('./components/about/about.component')
+        .then(m => m.AboutComponent)
+  }
 ];
