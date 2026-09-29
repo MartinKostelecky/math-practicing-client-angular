@@ -1,0 +1,121 @@
+<div class="page">
+
+  <div class="text-center">
+
+    <h1 class="font category-title">
+      Procvičování matematiky: násobení ×
+    </h1>
+
+    <div
+      id="main-container"
+      class="container"
+      [class.rainbow-border]="successMessage() !== null"
+      [class.greyscale-border]="failureMessage() !== null"
+      [class.container-mistake]="failureMessage() !== null"
+    >
+
+      @if (isLoading()) {
+
+        <p class="font">
+          Načítám příklad...
+        </p>
+
+      } @else if (example()) {
+
+        <h2 class="font">Příklad:</h2>
+
+        <p class="font">
+          {{ example()!.exampleTitle }}
+        </p>
+
+        <form (ngSubmit)="checkAnswer()">
+
+          <div class="form-group">
+
+            <label for="answer">=</label>
+
+            <input
+              type="text"
+              class="form-control"
+              placeholder="VÍŠ KOLIK TO JE? :)"
+              id="answer"
+              name="answer"
+              [ngModel]="answer()"
+              (ngModelChange)="answer.set($event)"
+              required
+            />
+
+          </div>
+
+          <button
+            type="submit"
+            (click)="removeRainbowBorder()"
+          >
+            ZKONTROLOVAT
+          </button>
+
+        </form>
+
+      } @else {
+
+        <p class="font">
+          Nepodařilo se načíst příklad.
+        </p>
+
+      }
+
+      @if (successMessage()) {
+        <p class="font alert alert-success">
+          {{ successMessage() }}
+        </p>
+      }
+
+      @if (failureMessage()) {
+        <p class="font-mistake font alert alert-danger">
+          {{ failureMessage() }}
+        </p>
+      }
+
+      <div class="unicorn-counter">
+
+        @for (badge of unicorns(); track $index) {
+          <div class="unicorn">
+            <img
+              src="/img/unicorn.jpg"
+              alt="Unicorn"
+            />
+          </div>
+        }
+
+      </div>
+
+    </div>
+
+    <div class="text-center">
+
+      <a
+        routerLink="/"
+        class="button-no-background"
+      >
+        Zpět na hlavní stranu
+      </a>
+
+    </div>
+
+  </div>
+
+</div>
+
+<audio
+  #successSound
+  src="/audio/success.wav"
+  preload="auto"
+  hidden>
+</audio>
+
+<audio
+  #failureSound
+  src="/audio/failure.wav"
+  preload="auto"
+  hidden>
+</audio>

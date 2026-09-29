@@ -44,7 +44,7 @@ export const routes: Routes = [
         .then(m => m.AdditionComponent)
   },
 
-  /* {
+  {
     path: 'subtraction',
     loadComponent: () =>
       import('./components/subtraction/subtraction.component')
@@ -52,6 +52,13 @@ export const routes: Routes = [
   },
 
   {
+    path: 'multiplication',
+    loadComponent: () =>
+      import('./components/multiplication/multiplication.component')
+        .then(m => m.MultiplicationComponent)
+  },
+
+  /* {
     path: 'logic-operators',
     loadComponent: () =>
       import('./components/logic-operators/logic-operators.component')

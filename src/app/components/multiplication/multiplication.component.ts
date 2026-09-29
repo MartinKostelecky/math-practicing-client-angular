@@ -1,0 +1,146 @@
+import {Component, ElementRef, OnInit, signal, ViewChild} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {RouterLink} from '@angular/router';
+import {HttpClient} from '@angular/common/http';
+
+interface ExampleDTO {
+  id: number;
+  category: string;
+  exampleTitle: string;
+  rightAnswer: string;
+  answer: string | null;
+  isCorrect: boolean | null;
+}
+
+interface UnicornBadgeDTO {
+  name: string;
+}
+
+interface ResultResponse {
+  success: boolean;
+  isAccomplished: boolean;
+  unicornBadges: UnicornBadgeDTO[];
+  category: string;
+  message?: string;
+}
+
+@Component({
+  selector: 'app-multiplication',
+  imports: [FormsModule, RouterLink],
+  templateUrl: './multiplication.component.html',
+  styleUrl: './multiplication.component.css'
+})
+export class MultiplicationComponent implements OnInit {
+
+  private readonly apiUrl = 'http://localhost:8080/api';
+
+  @ViewChild('successSound')
+  successSound!: ElementRef<HTMLAudioElement>;
+
+  @ViewChild('failureSound')
+  failureSound!: ElementRef<HTMLAudioElement>;
+
+  example = signal<ExampleDTO | null>(null);
+
+  answer = signal('');
+
+  successMessage = signal<string | null>(null);
+  failureMessage = signal<string | null>(null);
+
+  unicorns = signal<UnicornBadgeDTO[]>([]);
+
+  isLoading = signal(true);
+
+  constructor(private http: HttpClient) {
+  }
+
+  ngOnInit(): void {
+    this.loadExample();
+  }
+
+  loadExample(): void {
+    this.isLoading.set(true);
+
+    this.http.get<ExampleDTO>(`${this.apiUrl}/multiplication`)
+      .subscribe({
+        next: (example) => {
+          this.example.set(example);
+          this.answer.set('');
+          this.isLoading.set(false);
+        },
+
+        error: (error) => {
+          console.error('Error loading multiplication example:', error);
+          this.isLoading.set(false);
+        }
+      });
+  }
+
+  checkAnswer(): void {
+    const currentExample = this.example();
+    const currentAnswer = this.answer();
+
+    if (!currentExample || !currentAnswer.trim()) {
+      return;
+    }
+
+    this.successMessage.set(null);
+    this.failureMessage.set(null);
+
+    const request: ExampleDTO = {
+      ...currentExample,
+      answer: currentAnswer
+    };
+
+    this.http.post<ResultResponse>(
+      `${this.apiUrl}/result`,
+      request
+    ).subscribe({
+      next: (result) => {
+
+        this.unicorns.set(result.unicornBadges);
+
+        if (result.success) {
+
+          this.successMessage.set(
+            result.message ?? 'JUPÍ, SPRÁVNĚ! :)'
+          );
+
+          this.successSound.nativeElement.play()
+            .catch(error =>
+              console.log('Error playing success sound:', error)
+            );
+
+          if (result.isAccomplished) {
+
+            // All unicorns accomplished.
+            // Navigate to /success when that page is implemented.
+
+          } else {
+
+            this.loadExample();
+          }
+
+        } else {
+
+          this.failureMessage.set(
+            result.message ?? 'ZKUS TO ZNOVU! :('
+          );
+
+          this.failureSound.nativeElement.play()
+            .catch(error =>
+              console.log('Error playing failure sound:', error)
+            );
+        }
+      },
+
+      error: (error) => {
+        console.error('Error checking multiplication answer:', error);
+      }
+    });
+  }
+
+  removeRainbowBorder(): void {
+    this.successMessage.set(null);
+  }
+}
