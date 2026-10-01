@@ -1,0 +1,56 @@
+<div class="page">
+
+  <div class="text-center">
+
+    <h1 class="font">
+      Procvičování matematiky: Gratulace!!!
+    </h1>
+
+    <div
+      id="main-container"
+      class="container"
+      [class.rainbow-border]="accomplishedMessage()"
+    >
+
+      <div class="unicorn-counter">
+
+        @for (unicorn of unicorns(); track unicorn) {
+          <div class="unicorn">
+            <img
+              src="/img/unicorn.jpg"
+              alt="Unicorn"
+            />
+          </div>
+        }
+
+      </div>
+
+      @if (accomplishedMessage()) {
+        <p class="font">
+          {{ accomplishedMessage() }}
+        </p>
+      }
+
+    </div>
+
+    <div class="text-center">
+
+      <a
+        routerLink="/"
+        class="button-no-background"
+      >
+        Zpět na hlavní stranu
+      </a>
+
+    </div>
+
+  </div>
+
+</div>
+
+<audio
+  #accomplishedMelody
+  src="/audio/melody.wav"
+  preload="auto"
+  hidden>
+</audio>
